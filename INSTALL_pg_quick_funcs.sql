@@ -5,7 +5,7 @@
 -- LAWS:
 --   * All the fuckin' functions should start with "qf_", that's the prefix, don't mess it up!
 --   * Any time you add a function here, add its DROP sentence in the uninstall_pg_quick_funcs.sql 
-       or to the qf_uninstall_qf().
+--     or to the qf_uninstall_qf().
 --   * Keep decent names. Not those you choose for you kids.
 --   * Keep sql and plsql languages. 
 --   * Keep the definition with the funciton name in the middle.
@@ -67,12 +67,17 @@ DECLARE
        r record;
        output_text text := '';
 BEGIN
-       FOR r IN select psd.*, pg_size_pretty(pg_database_size(datname)) as size 
-from pg_database pd join pg_stat_database psd using (datname)
-order by pg_database_size(datname) desc
+       FOR r IN select psd.*, 
+                  pg_size_pretty(pg_database_size(datname)) as size 
+                from pg_database pd join pg_stat_database psd using (datname)
+                order by pg_database_size(datname) desc
        LOOP
-              output_text = output_text || (r.*)::text || $$
-              $$;
+              output_text = output_text || 
+                 $$========================================== 
+                 $$ || 'Database: ' || (r.*).datname || ' (id):' || (r.*).datid || $$
+                 $$ || 'Current Backends ' || (r.*).numbackends || $$ 
+                 $$ || (r.*)::text || $$
+                 $$;
        END LOOP;
        RETURN output_text;
 END;
