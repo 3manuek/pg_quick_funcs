@@ -9,6 +9,8 @@
 --   * Keep decent names. Not those you choose for you kids.
 --   * Keep sql and plsql languages. 
 --   * Keep the definition with the funciton name in the middle.
+--   * functions should have a nice output being executed in the way: select function(); . I know this
+--     somehow fishy, but the idea is to make a nice framework.
 
 
 
@@ -18,5 +20,52 @@ BEGIN
     RAISE NOTICE '    qf_help()                 -> This function, idiot.';
 END;
 $qf_help$ LANGUAGE plpgsql;
+
+
+CREATE VIEW _qf_vw_dbsinfo AS
+select psd.*, pg_size_pretty(pg_database_size(datname)) as size 
+from pg_database pd join pg_stat_database psd using (datname)
+order by pg_database_size(datname) desc;
+
+CREATE OR REPLACE qf_dbs_info() RETURNS _qf_vw_dbsinfo AS $$ select * from _qf_vw_dbsinfo $$ LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION qf_dbs_info() RETURNS TABLE
+(  
+ datid oid,
+  datname  name, 
+ numbackends    integer                  , 
+ xact_commit    bigint                   , 
+ xact_rollback  bigint                   , 
+ blks_read      bigint                   , 
+ blks_hit       bigint                   , 
+ tup_returned   bigint                   , 
+ tup_fetched    bigint                   , 
+ tup_inserted   bigint                   , 
+ tup_updated    bigint                   , 
+ tup_deleted    bigint                   , 
+ conflicts      bigint                   , 
+ stats_reset    timestamp with time zone ,  
+ size           text
+) AS $gf_dbs_info$
+select psd.*, pg_size_pretty(pg_database_size(datname)) as size 
+from pg_database pd join pg_stat_database psd using (datname)
+order by pg_database_size(datname) desc
+$gf_dbs_info$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION qf_dbs_info () RETURNS text AS $qf_dbs_info$
+DECLARE
+       r record;
+       output_text text := '';
+BEGIN
+       FOR r IN select psd.*, pg_size_pretty(pg_database_size(datname)) as size 
+from pg_database pd join pg_stat_database psd using (datname)
+order by pg_database_size(datname) desc
+       LOOP
+              output_text = output_text || (r.*)::text || $$\n$$;
+       END LOOP;
+       RETURN output_text;
+END;
+$qf_dbs_info$ LANGUAGE plpgsql;
 
 
