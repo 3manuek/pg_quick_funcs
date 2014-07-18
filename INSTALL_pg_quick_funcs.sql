@@ -13,7 +13,9 @@
 --     somehow fishy, but the idea is to make a nice framework.
 
 
-
+--
+-- Function: qf_help
+--
 CREATE OR REPLACE FUNCTION qf_help() RETURNS NULL $qf_help$
 BEGIN
     RAISE NOTICE ' Help(): ';
@@ -22,12 +24,19 @@ END;
 $qf_help$ LANGUAGE plpgsql;
 
 
+--
+-- Function: _qf_vw_dbsinfo
+--
+-- The idea is to return something pretty, not a shity ouput
+--
+
 CREATE VIEW _qf_vw_dbsinfo AS
 select psd.*, pg_size_pretty(pg_database_size(datname)) as size 
 from pg_database pd join pg_stat_database psd using (datname)
 order by pg_database_size(datname) desc;
 
-CREATE OR REPLACE qf_dbs_info() RETURNS _qf_vw_dbsinfo AS $$ select * from _qf_vw_dbsinfo $$ LANGUAGE SQL;
+CREATE OR REPLACE FUNCTION qf_dbs_info() RETURNS _qf_vw_dbsinfo AS 
+$$ select * from _qf_vw_dbsinfo $$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION qf_dbs_info() RETURNS TABLE
 (  
@@ -62,7 +71,8 @@ BEGIN
 from pg_database pd join pg_stat_database psd using (datname)
 order by pg_database_size(datname) desc
        LOOP
-              output_text = output_text || (r.*)::text || $$\n$$;
+              output_text = output_text || (r.*)::text || $$
+              $$;
        END LOOP;
        RETURN output_text;
 END;
