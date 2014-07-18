@@ -70,12 +70,16 @@ BEGIN
        FOR r IN select psd.*, 
                   pg_size_pretty(pg_database_size(datname)) as size 
                 from pg_database pd join pg_stat_database psd using (datname)
+                where psd.datname NOT IN ('template0','template1')
                 order by pg_database_size(datname) desc
        LOOP
               output_text = output_text || 
                  $$========================================== 
-                 $$ || 'Database: ' || (r.*).datname || ' (id):' || (r.*).datid || $$
-                 $$ || 'Current Backends ' || (r.*).numbackends || $$ 
+                 $$ || 'Database: ' || (r.datname) || ' (id):' || (r.datid)::text || $$
+                 $$ || 'Current Backends ' || (r.numbackends)::text || $$ 
+                 $$ || 'Size :           ' || (r.size)::text || $$ 
+                 $$ || 'Comit/Rollback : ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
+                 $$ || 'Blks Read/hit  : ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
                  $$ || (r.*)::text || $$
                  $$;
        END LOOP;
