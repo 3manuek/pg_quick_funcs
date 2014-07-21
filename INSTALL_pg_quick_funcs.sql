@@ -62,6 +62,13 @@ order by pg_database_size(datname) desc
 $gf_dbs_info$
 LANGUAGE SQL;
 
+--
+-- Function: qf_dbs_info
+--
+-- TODO:
+--   Overload this function with "name" parameter to filter down per database basis.
+--
+
 CREATE OR REPLACE FUNCTION qf_dbs_info () RETURNS text AS $qf_dbs_info$
 DECLARE
        r record;
