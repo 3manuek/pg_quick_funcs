@@ -70,7 +70,7 @@ DECLARE
        ratio_rw bigint;
        version_num int;
 BEGIN
-       SELECT setting into version_num FROM pg_settings WHERE name = 'server_version_num';
+       SELECT setting INTO version_num FROM pg_settings WHERE name = 'server_version_num';
        FOR r IN select psd.*, 
                   pg_size_pretty(pg_database_size(datname)) as size 
                 from pg_database pd join pg_stat_database psd using (datname)
