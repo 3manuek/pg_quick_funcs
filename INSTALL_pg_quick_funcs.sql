@@ -105,7 +105,7 @@ BEGIN
                         
                         $$ || 'Tablespaces                   :' || (r.confl_tablespace) || $$
                         $$ || 'Lock issues                   :' || (r.confl_lock) || $$
-                        $$ || 'Snapshots issues              :' || (r.conf_snapshot) || $$
+                        $$ || 'Snapshots issues              :' || (r.confl_snapshot) || $$
                         $$ || 'Bufferpin issues              :' || (r.confl_bufferpin) || $$
                         $$ || 'Deadlocks issues              :' || (r.confl_deadlock) || $$
                         $$;
