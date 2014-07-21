@@ -1,0 +1,13 @@
+TODO
+====
+
+- qf_dbs_info: 
+    * Add a table average size and biggest tables.
+    * Also db size.
+
+- New functions
+    * Biggest N tables 
+    * Tables with more SeqScan than RandomScans that are bigger than N GB/MBs
+    * txid information and freeze min ages, alerting about promity to the limit.
+    * Oldest vacuumed table and alter if it has dead rows.
+    * Amount of tables per user
