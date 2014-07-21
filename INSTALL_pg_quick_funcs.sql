@@ -78,22 +78,35 @@ BEGIN
        LOOP
               sum_write = (r.tup_inserted) + (r.tup_updated) + (r.tup_deleted);
               output_text = output_text || 
-                 $$========================================== 
+                 $$
+                 ========================================== 
                  $$ || 'Database: ' || (r.datname) || ' (id):' || (r.datid)::text || $$
                  $$ || 'Current Backends            ' || (r.numbackends)::text || $$ 
                  $$ || 'Size :                      ' || (r.size)::text || $$ 
                  $$ || 'Comit/Rollback :            ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
                  $$ || 'Blks Read/hit  :            ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
                  $$ || 'Tuples writen :             ' || sum_write || $$
-                 $$ || 'R/W Ratio:                  ' || (r.sum_write || $$
-                 $$ || 'Conflicts :                 ' || (r.conflicts) || $$
+                 $$ || 'R/W Ratio:                  ' || (r.sum_write) || $$
                  $$ || 'ShBuf Effectiveness (% hit):' || ((r.blks_hit) * 100 / (r.blks_read) + (r.blks_hit))::text || $$
-                 $$ || (r.*)::text || $$
-                 $$;
+                 $$; 
+                 --|| (r.*)::text || $$
+                 -- $$ || 'Conflicts :                 ' || (r.conflicts) || $$
+                 --$$;
               CASE 
                  WHEN (version > 90300) THEN
-                    output_text = output_text ||
+                    -- output_text = output_text ||
                     -- temp_files and bytes, deadlocks
+                    FOR r IN SELECT * FROM pg_stat_database_conflicts WHERE datname NOT IN ('template0','template1')
+                    LOOP
+                        output_text = output_text || $$
+                        
+                        $$ || 'Tablespaces                   :' || (r.confl_tablespace) || $$
+                        $$ || 'Lock issues                   :' || (r.confl_lock) || $$
+                        $$ || 'Snapshots issues              :' || (r.conf_snapshot) || $$
+                        $$ || 'Bufferpin issues              :' || (r.confl_bufferpin) || $$
+                        $$ || 'Deadlocks issues              :' || (r.confl_deadlock) || $$
+                        $$;
+                    END LOOP;
               ELSE 
                 NULL;
               END CASE;
