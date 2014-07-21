@@ -80,14 +80,14 @@ BEGIN
               output_text = output_text || 
                  $$========================================== 
                  $$ || 'Database: ' || (r.datname) || ' (id):' || (r.datid)::text || $$
-                 $$ || 'Current Backends     ' || (r.numbackends)::text || $$ 
-                 $$ || 'Size :               ' || (r.size)::text || $$ 
-                 $$ || 'Comit/Rollback :     ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
-                 $$ || 'Blks Read/hit  :     ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
-                 $$ || 'Tuples writen :      ' || sum_write || $$
-                 $$ || 'R/W Ratio:           ' || (r.sum_write || $$
-                 $$ || 'Conflicts :          ' || (r.conflicts) || $$
-                 $$ || 'ShBuf Effectiveness :' ||  -- hits are  the shared buffers blocks, read from disk
+                 $$ || 'Current Backends            ' || (r.numbackends)::text || $$ 
+                 $$ || 'Size :                      ' || (r.size)::text || $$ 
+                 $$ || 'Comit/Rollback :            ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
+                 $$ || 'Blks Read/hit  :            ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
+                 $$ || 'Tuples writen :             ' || sum_write || $$
+                 $$ || 'R/W Ratio:                  ' || (r.sum_write || $$
+                 $$ || 'Conflicts :                 ' || (r.conflicts) || $$
+                 $$ || 'ShBuf Effectiveness (% hit):' || ((r.blks_hit) * 100 / (r.blks_read) + (r.blks_hit))::text || $$
                  $$ || (r.*)::text || $$
                  $$;
               CASE 
