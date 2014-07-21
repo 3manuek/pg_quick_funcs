@@ -77,6 +77,7 @@ BEGIN
                 order by pg_database_size(datname) desc
        LOOP
               sum_write = (r.tup_inserted) + (r.tup_updated) + (r.tup_deleted);
+              ratio_rw = 0;
               output_text = output_text || 
                  $$
                  ========================================== 
@@ -86,7 +87,7 @@ BEGIN
                  $$ || 'Comit/Rollback :            ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
                  $$ || 'Blks Read/hit  :            ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
                  $$ || 'Tuples writen :             ' || sum_write || $$
-                 $$ || 'R/W Ratio:                  ' || (r.sum_write) || $$
+                 $$ || 'R/W Ratio:                  ' || ratio_rw || $$
                  $$ || 'ShBuf Effectiveness (% hit):' || ((r.blks_hit) * 100 / (r.blks_read) + (r.blks_hit))::text || $$
                  $$; 
                  --|| (r.*)::text || $$
