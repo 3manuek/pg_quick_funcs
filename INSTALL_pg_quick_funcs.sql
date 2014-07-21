@@ -67,6 +67,7 @@ DECLARE
        r record;
        output_text text := '';
        sum_write bigint;
+       ratio_rw bigint;
        version int;
 BEGIN
        SELECT setting into version FROM pg_settings WHERE name = 'server_version_num';
