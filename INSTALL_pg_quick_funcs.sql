@@ -68,9 +68,9 @@ DECLARE
        output_text text := '';
        sum_write bigint;
        ratio_rw bigint;
-       version int;
+       version_num int;
 BEGIN
-       SELECT setting into version FROM pg_settings WHERE name = 'server_version_num';
+       SELECT setting into version_num FROM pg_settings WHERE name = 'server_version_num';
        FOR r IN select psd.*, 
                   pg_size_pretty(pg_database_size(datname)) as size 
                 from pg_database pd join pg_stat_database psd using (datname)
@@ -83,6 +83,7 @@ BEGIN
                  $$
                  ========================================== 
                  $$ || 'Database: ' || (r.datname) || ' (id):' || (r.datid)::text || $$
+                 $$ || 'Version Number              ' || (version_num)::text || $$
                  $$ || 'Current Backends            ' || (r.numbackends)::text || $$ 
                  $$ || 'Size :                      ' || (r.size)::text || $$ 
                  $$ || 'Comit/Rollback :            ' || (r.xact_commit)::text || '/' || (r.xact_rollback)::text || $$
@@ -95,7 +96,7 @@ BEGIN
                  -- $$ || 'Conflicts :                 ' || (r.conflicts) || $$
                  --$$;
               CASE 
-                 WHEN (version > 90300) THEN
+                 WHEN (version_num > 90300) THEN
                     -- output_text = output_text ||
                     -- temp_files and bytes, deadlocks
                     FOR r IN SELECT * FROM pg_stat_database_conflicts WHERE datname NOT IN ('template0','template1')
