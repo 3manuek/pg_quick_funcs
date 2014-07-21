@@ -96,7 +96,7 @@ BEGIN
                  -- $$ || 'Conflicts :                 ' || (r.conflicts) || $$
                  --$$;
               CASE 
-                 WHEN (version_num > 90300) THEN
+                 WHEN (version_num > 90100) THEN
                     -- output_text = output_text ||
                     -- temp_files and bytes, deadlocks
                     FOR r IN SELECT * FROM pg_stat_database_conflicts WHERE datname NOT IN ('template0','template1')
