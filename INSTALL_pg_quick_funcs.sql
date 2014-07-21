@@ -90,7 +90,7 @@ BEGIN
                  $$ || 'Blks Read/hit  :            ' || (r.blks_read)::text || '/' || (r.blks_hit)::text || $$
                  $$ || 'Tuples writen :             ' || sum_write || $$
                  $$ || 'R/W Ratio:                  ' || ratio_rw || $$
-                 $$ || 'ShBuf Effectiveness (% hit):' || ((r.blks_hit) * 100 / (r.blks_read)+1 + (r.blks_hit))::text || $$
+                 $$ || 'ShBuf Effectiveness (% hit):' || ((r.blks_hit) * 100 / (r.blks_read) + (r.blks_hit) + 10 )::text || $$
                  $$; 
                  --|| (r.*)::text || $$
                  -- $$ || 'Conflicts :                 ' || (r.conflicts) || $$
