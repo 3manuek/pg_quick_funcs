@@ -125,4 +125,36 @@ BEGIN
 END;
 $qf_dbs_info$ LANGUAGE plpgsql;
 
-
+--
+-- Function : qf_find_bad_toast
+--    Author: Josh Berkus http://www.databasesoup.com/2014/07/improved-toast-corruption-function.html
+--
+create or replace function qf_find_bad_toast (
+   tablename text,
+   pk_col text
+)
+returns text
+language plpgsql
+as
+$qf_find_bad_toast$
+declare
+   curid BIGINT := 0;
+   badid BIGINT;
+begin
+FOR badid IN EXECUTE 'SELECT ' || pk_col || ' FROM ' || tablename LOOP
+   curid = curid + 1;
+   if curid % 100000 = 0 then
+       raise notice '% rows inspected', curid;
+   end if;
+   begin
+       EXECUTE 'COPY ( SELECT * FROM ' || tablename || ' WHERE ' ||
+            pk_col || ' = ' || cast(badid as text) || ') TO ''/tmp/testout'';';
+   exception
+       when others then
+           raise notice 'data for id % is corrupt', badid;
+           continue;
+   end;
+end loop;
+return 'done checking all rows';
+end;
+$qf_find_bad_toast$;
