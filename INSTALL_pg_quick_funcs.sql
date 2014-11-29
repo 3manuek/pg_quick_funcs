@@ -7,7 +7,7 @@
 --   * Any time you add a function here, add its DROP sentence in the uninstall_pg_quick_funcs.sql 
 --     or to the qf_uninstall_qf().
 --   * Keep decent names. Not those you choose for you kids.
---   * Keep sql and plsql languages. 
+--   * Keep sql and plpgsql languages. 
 --   * Keep the definition with the funciton name in the middle.
 --   * functions should have a nice output being executed in the way: select function(); . I know this
 --     somehow fishy, but the idea is to make a nice framework.
